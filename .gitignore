@@ -2,3 +2,5 @@ data/_private/
 __pycache__/
 *.pyc
 .venv/
+dist/
+.wrangler/

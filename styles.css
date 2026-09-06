@@ -145,7 +145,20 @@ button { font-family: inherit; }
 .hero-blurb {
   color: var(--ink-dim);
   font-size: 1rem;
+  margin: 0 0 1.1rem;
+}
+
+/* Deliberately understated: the mystique works better whispered than shouted. */
+.hero-disclaimer {
+  display: inline-block;
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+  font-style: italic;
+  letter-spacing: 0.02em;
   margin: 0 0 2.5rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+  max-width: 34ch;
 }
 
 .replay-btn {
@@ -230,36 +243,12 @@ button { font-family: inherit; }
 }
 .search-field input::placeholder { color: var(--ink-faint); }
 
-.tour-filter {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.tour-chip {
-  background: transparent;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  border-radius: 999px;
-  padding: 0.5em 1.1em;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 150ms var(--ease);
-}
-.tour-chip:hover { border-color: var(--ink-dim); color: var(--ink); }
-.tour-chip.is-active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-ink);
-}
-
 /* ---------------------------------------------------------------------- */
-/* Podium + list: ONE row template, styled purely by DOM position          */
+/* Ranking list: ONE row template, identical for every position            */
 /* ---------------------------------------------------------------------- */
-/* The top 3 get the big "podium card" treatment via :nth-child, not a rank
-   attribute baked in at render time. That's what lets "Replay the week"
-   reorder the raw DOM (see app.js) and have the podium visually follow
-   whoever actually occupies those first three slots at any given moment. */
+/* Layout is: rank | avatar | name | flag | weekly move. Nothing about a
+   row depends on the rank baked in at render time, so "Replay the week"
+   can reorder the raw DOM (see app.js) and everything still lines up. */
 
 .list-section {
   max-width: var(--container);
@@ -271,22 +260,21 @@ button { font-family: inherit; }
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
 .ranking-list.is-replaying .row--decade::before { display: none; }
 
 .row {
-  grid-column: 1 / -1;
   display: flex;
   align-items: center;
   gap: 1rem;
   background: var(--bg-raised);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  padding: 0.7rem 1.1rem;
+  padding: 0.6rem 1.1rem;
   will-change: transform;
   opacity: 0;
   transform: translateY(14px);
@@ -300,11 +288,18 @@ button { font-family: inherit; }
 .row-num {
   font-family: var(--font-display);
   font-size: 1.6rem;
+  line-height: 1;
   color: var(--ink-faint);
-  min-width: 2.6ch;
+  min-width: 2.8ch;
   text-align: right;
   flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
+
+/* the only nod to the top 3: a tinted rank number, same row shape */
+.ranking-list > .row:nth-child(1) .row-num { color: #e8b64c; }
+.ranking-list > .row:nth-child(2) .row-num { color: #c9ccd1; }
+.ranking-list > .row:nth-child(3) .row-num { color: #cd8a52; }
 
 .row-avatar {
   width: 38px; height: 38px;
@@ -334,24 +329,24 @@ button { font-family: inherit; }
 .row-country {
   display: flex;
   align-items: center;
-  gap: 0.4em;
-  color: var(--ink-dim);
-  font-size: 0.85rem;
+  justify-content: center;
+  width: 30px;
   flex-shrink: 0;
-  min-width: 8ch;
 }
-.row-flag { font-size: 1.1rem; }
-
-.row-tours { display: flex; gap: 0.3em; flex-shrink: 0; }
-.tour-badge {
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  padding: 0.2em 0.5em;
-  border-radius: 4px;
-  background: var(--bg-raised-2);
-  color: var(--ink-faint);
+.row-flag {
+  width: 30px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 3px;
   border: 1px solid var(--line);
+  display: block;
+}
+.row-flag--none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-faint);
+  font-size: 0.8rem;
 }
 
 .move-badge {
@@ -360,8 +355,13 @@ button { font-family: inherit; }
   gap: 0.3em;
   font-weight: 800;
   font-size: 0.85rem;
-  min-width: 3.5ch;
   justify-content: flex-end;
+  flex-shrink: 0;
+}
+.row-move {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 5ch;
   flex-shrink: 0;
 }
 .move-badge .arrow { font-size: 0.8em; }
@@ -390,80 +390,6 @@ button { font-family: inherit; }
   color: var(--ink-faint);
   text-transform: uppercase;
 }
-
-/* ---- podium card treatment for the first 3 rows, by DOM position ---- */
-
-.ranking-list > .row:nth-child(-n+3) {
-  grid-column: span 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  text-align: center;
-  gap: 0.6rem;
-  padding: 1.6rem 1.2rem 1.4rem;
-  min-height: 260px;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(180deg, var(--bg-raised-2), var(--bg-raised));
-}
-/* Billboard order: 2nd - 1st - 3rd, with 1st visually dominant. Negative
-   order values keep the podium ahead of every other row (which all sit at
-   the default order:0) regardless of how many rows follow. */
-.ranking-list > .row:nth-child(1) { order: -2; }
-.ranking-list > .row:nth-child(2) { order: -3; }
-.ranking-list > .row:nth-child(3) { order: -1; }
-
-.ranking-list > .row:nth-child(1) {
-  min-height: 320px;
-  border-color: rgba(232, 182, 76, 0.5);
-  background: linear-gradient(180deg, rgba(232, 182, 76, 0.14), var(--bg-raised));
-}
-
-.ranking-list > .row:nth-child(-n+3) .row-num {
-  position: absolute;
-  top: -0.3em;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 9rem;
-  min-width: 0;
-  text-align: center;
-  color: var(--ink);
-  opacity: 0.06;
-  z-index: 0;
-  pointer-events: none;
-  user-select: none;
-}
-.ranking-list > .row:nth-child(1) .row-num { font-size: 11rem; opacity: 0.09; color: var(--accent); }
-
-.ranking-list > .row:nth-child(-n+3) .row-avatar,
-.ranking-list > .row:nth-child(-n+3) .row-avatar-fallback {
-  width: 76px; height: 76px;
-  position: relative; z-index: 1;
-}
-.ranking-list > .row:nth-child(-n+3) .row-avatar-fallback { font-size: 2rem; }
-.ranking-list > .row:nth-child(1) .row-avatar,
-.ranking-list > .row:nth-child(1) .row-avatar-fallback { width: 96px; height: 96px; }
-.ranking-list > .row:nth-child(1) .row-avatar-fallback { font-size: 2.4rem; }
-.ranking-list > .row:nth-child(1) .row-avatar { border-color: var(--accent); }
-
-.ranking-list > .row:nth-child(-n+3) .row-name {
-  font-weight: 800;
-  font-size: 1.1rem;
-  white-space: normal;
-  overflow: visible;
-  position: relative; z-index: 1;
-}
-.ranking-list > .row:nth-child(1) .row-name { font-size: 1.4rem; }
-
-.ranking-list > .row:nth-child(-n+3) .row-country {
-  min-width: 0;
-  position: relative; z-index: 1;
-}
-.ranking-list > .row:nth-child(-n+3) .row-flag { font-size: 1.4rem; }
-
-.ranking-list > .row:nth-child(-n+3) .row-tours { display: none; }
-
-.ranking-list > .row:nth-child(-n+3) .row-move { position: relative; z-index: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   .row {
@@ -498,45 +424,11 @@ button { font-family: inherit; }
 /* ---------------------------------------------------------------------- */
 
 @media (max-width: 760px) {
-  .ranking-list { grid-template-columns: 1fr; gap: 0.6rem; }
-
-  .ranking-list > .row:nth-child(-n+3) {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    align-items: center;
-    text-align: left;
-    justify-content: flex-start;
-    padding: 1rem;
-    min-height: 0;
-  }
-  .ranking-list > .row:nth-child(1) { order: -3; min-height: 0; }
-  .ranking-list > .row:nth-child(2) { order: -2; }
-  .ranking-list > .row:nth-child(3) { order: -1; }
-
-  .ranking-list > .row:nth-child(-n+3) .row-num {
-    position: static;
-    transform: none;
-    font-size: 3rem;
-    opacity: 0.35;
-    line-height: 1;
-    width: 1.6em;
-    flex-shrink: 0;
-  }
-  .ranking-list > .row:nth-child(1) .row-num { font-size: 3.6rem; opacity: 0.4; }
-
-  .ranking-list > .row:nth-child(-n+3) .row-avatar,
-  .ranking-list > .row:nth-child(-n+3) .row-avatar-fallback,
-  .ranking-list > .row:nth-child(1) .row-avatar,
-  .ranking-list > .row:nth-child(1) .row-avatar-fallback {
-    width: 48px; height: 48px; font-size: 1.2rem;
-  }
-  .ranking-list > .row:nth-child(-n+3) .row-name { font-size: 1rem; }
-  .ranking-list > .row:nth-child(1) .row-name { font-size: 1.1rem; }
-  .ranking-list > .row:nth-child(-n+3) .row-move { margin-left: auto; }
-
-  .row-num { font-size: 1.3rem; min-width: 2ch; }
-  .row-country { display: none; }
-  .row-tours { display: none; }
+  .list-section { padding: 2.5rem 0.9rem 4rem; }
+  .row { gap: 0.7rem; padding: 0.55rem 0.8rem; }
+  .row-num { font-size: 1.3rem; min-width: 2.4ch; }
+  .row-avatar, .row-avatar-fallback { width: 34px; height: 34px; }
+  .row-move { min-width: 4ch; }
   .hero { padding: 5rem 1rem 2.5rem; }
   .hero-title { letter-spacing: 0; }
 }

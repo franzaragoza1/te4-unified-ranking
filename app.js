@@ -4,14 +4,12 @@ const listEl = document.getElementById("ranking-list");
 const weekLabelEl = document.getElementById("week-label");
 const replayBtn = document.getElementById("replay-btn");
 const searchInput = document.getElementById("search-input");
-const tourChips = document.querySelectorAll(".tour-chip");
 const emptyStateEl = document.getElementById("empty-state");
 
 const rowsByName = new Map();
 let players = [];
 let previousOrder = [];
 let filterText = "";
-let filterTour = "All";
 let isReplaying = false;
 
 function prefersReducedMotion() {
@@ -22,10 +20,18 @@ function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function flagEmoji(iso2) {
-  if (!iso2 || iso2.length !== 2) return "";
-  const codePoints = [...iso2.toUpperCase()].map((c) => 127397 + c.charCodeAt(0));
-  return String.fromCodePoint(...codePoints);
+// Flag emoji don't render on Windows/Chrome, so we serve real flag images
+// (flagcdn) and fall back to the ISO code when a country can't be resolved.
+function flagMarkup(iso2, countryName) {
+  const label = countryName || "Unknown";
+  if (!iso2 || iso2.length !== 2) {
+    return `<span class="row-flag row-flag--none" title="${escapeAttr(label)}">–</span>`;
+  }
+  const code = iso2.toLowerCase();
+  return `<img class="row-flag" loading="lazy" width="30" height="20"
+    src="https://flagcdn.com/w40/${code}.png"
+    srcset="https://flagcdn.com/w80/${code}.png 2x"
+    alt="${escapeAttr(label)}" title="${escapeAttr(label)}">`;
 }
 
 function hashHue(name) {
@@ -77,7 +83,7 @@ function moveInfo(player) {
       aria: `Down ${abs} place${abs === 1 ? "" : "s"}`,
     };
   }
-  return { html: `<span class="move-same move-badge">–</span>`, aria: "Unchanged" };
+  return { html: `<span class="move-same move-badge">=</span>`, aria: "Unchanged" };
 }
 
 function buildRow(player) {
@@ -90,16 +96,13 @@ function buildRow(player) {
     li.dataset.decadeLabel = `${player.rank}–${player.rank + 9}`;
   }
 
-  const flag = flagEmoji(player.country);
-  const countryLabel = player.country_name || "Unknown";
   const move = moveInfo(player);
 
   li.innerHTML = `
     <span class="row-num">${player.rank}</span>
     ${avatarMarkup(player)}
     <span class="row-name">${escapeHtml(player.name)}</span>
-    <span class="row-country"><span class="row-flag" aria-hidden="true">${flag}</span> ${escapeHtml(countryLabel)}</span>
-    <span class="row-tours">${player.tours.map((t) => `<span class="tour-badge">${t}</span>`).join("")}</span>
+    <span class="row-country">${flagMarkup(player.country, player.country_name)}</span>
     <span class="row-move" role="text" aria-label="${escapeAttr(move.aria)}">${move.html}</span>
   `;
   return li;
@@ -123,13 +126,7 @@ function applyFilter() {
   let visibleCount = 0;
   for (const player of players) {
     const row = rowsByName.get(player.name);
-    const matchesText = !filterText || player.name.toLowerCase().includes(filterText);
-    let matchesTour = true;
-    if (filterTour === "WTSL") matchesTour = player.tours.length === 1 && player.tours[0] === "WTSL";
-    else if (filterTour === "MANA") matchesTour = player.tours.length === 1 && player.tours[0] === "MANA";
-    else if (filterTour === "BOTH") matchesTour = player.tours.length === 2;
-
-    const visible = matchesText && matchesTour;
+    const visible = !filterText || player.name.toLowerCase().includes(filterText);
     row.hidden = !visible;
     if (visible) visibleCount++;
   }
@@ -280,15 +277,6 @@ function initControls() {
   searchInput.addEventListener("input", () => {
     filterText = searchInput.value.trim().toLowerCase();
     applyFilter();
-  });
-
-  tourChips.forEach((chip) => {
-    chip.addEventListener("click", () => {
-      tourChips.forEach((c) => c.classList.remove("is-active"));
-      chip.classList.add("is-active");
-      filterTour = chip.dataset.tour;
-      applyFilter();
-    });
   });
 
   replayBtn.addEventListener("click", replayWeek);
