@@ -1,0 +1,542 @@
+/* ---------------------------------------------------------------------- */
+/* Tokens                                                                  */
+/* ---------------------------------------------------------------------- */
+
+:root {
+  --font-display: "Anton", "Arial Narrow", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --bg: #0a0a0b;
+  --bg-raised: #141416;
+  --bg-raised-2: #1c1c1f;
+  --line: #2a2a2e;
+
+  --ink: #f5f4f0;
+  --ink-dim: #a8a7ab;
+  --ink-faint: #6b6b70;
+
+  --accent: #e8b64c;
+  --accent-ink: #1a1305;
+
+  --up: #3ddc84;
+  --down: #ff5c5c;
+  --same: #6b6b70;
+  --new: #7fb8ff;
+  --return: #c58cff;
+
+  --radius: 14px;
+  --radius-sm: 8px;
+  --container: 1100px;
+
+  --ease: cubic-bezier(.2, .7, .3, 1);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Reset-ish base                                                         */
+/* ---------------------------------------------------------------------- */
+
+* { box-sizing: border-box; }
+
+html { color-scheme: dark; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: var(--accent); }
+
+button { font-family: inherit; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 0.75em 1.25em;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  z-index: 100;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Hero                                                                    */
+/* ---------------------------------------------------------------------- */
+
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 6rem 1.25rem 3rem;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232,182,76,0.10), transparent 60%),
+    var(--bg);
+  position: relative;
+}
+
+.hero-inner {
+  max-width: 1200px;
+  width: 100%;
+}
+
+.hero-kicker {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 1.5rem;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(3rem, 11vw, 9rem);
+  line-height: 0.92;
+  letter-spacing: 0.01em;
+  margin: 0 0 2.5rem;
+}
+
+.hero-meta {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.hero-week {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  color: var(--ink);
+  margin: 0 0 0.5rem;
+}
+
+.hero-blurb {
+  color: var(--ink-dim);
+  font-size: 1rem;
+  margin: 0 0 2.5rem;
+}
+
+.replay-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  background: transparent;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 0.85em 1.8em;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease), transform 200ms var(--ease);
+}
+.replay-btn:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--bg);
+}
+.replay-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.replay-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: var(--ink-faint);
+}
+.replay-icon {
+  font-size: 1.1em;
+  display: inline-block;
+  transition: transform 500ms var(--ease);
+}
+.replay-btn.is-spinning .replay-icon {
+  transform: rotate(-360deg);
+}
+
+.hero-scroll-cue {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 3rem;
+  background: linear-gradient(var(--ink-faint), transparent);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Controls                                                                */
+/* ---------------------------------------------------------------------- */
+
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(10,10,11,0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  padding: 0.9rem 1.25rem;
+}
+
+.controls-inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-field input {
+  width: 100%;
+  min-width: 220px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 0.6em 1.1em;
+  font-size: 0.95rem;
+}
+.search-field input::placeholder { color: var(--ink-faint); }
+
+.tour-filter {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.tour-chip {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  border-radius: 999px;
+  padding: 0.5em 1.1em;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms var(--ease);
+}
+.tour-chip:hover { border-color: var(--ink-dim); color: var(--ink); }
+.tour-chip.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Podium + list: ONE row template, styled purely by DOM position          */
+/* ---------------------------------------------------------------------- */
+/* The top 3 get the big "podium card" treatment via :nth-child, not a rank
+   attribute baked in at render time. That's what lets "Replay the week"
+   reorder the raw DOM (see app.js) and have the podium visually follow
+   whoever actually occupies those first three slots at any given moment. */
+
+.list-section {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 3.5rem 1.25rem 6rem;
+}
+
+.ranking-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.9rem;
+}
+
+.ranking-list.is-replaying .row--decade::before { display: none; }
+
+.row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 1.1rem;
+  will-change: transform;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 500ms var(--ease), transform 500ms var(--ease), background-color 400ms var(--ease);
+}
+.row.is-visible { opacity: 1; transform: translateY(0); }
+.row.row--pending { opacity: 0; }
+.row[hidden] { display: none !important; }
+.row.row--rising { background-color: rgba(61, 220, 132, 0.16); }
+
+.row-num {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--ink-faint);
+  min-width: 2.6ch;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.row-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+}
+.row-avatar-fallback {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.row-name {
+  font-weight: 700;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-country {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  min-width: 8ch;
+}
+.row-flag { font-size: 1.1rem; }
+
+.row-tours { display: flex; gap: 0.3em; flex-shrink: 0; }
+.tour-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  background: var(--bg-raised-2);
+  color: var(--ink-faint);
+  border: 1px solid var(--line);
+}
+
+.move-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-weight: 800;
+  font-size: 0.85rem;
+  min-width: 3.5ch;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+.move-badge .arrow { font-size: 0.8em; }
+.move-up { color: var(--up); }
+.move-down { color: var(--down); }
+.move-same { color: var(--same); }
+.move-new, .move-return {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 0.25em 0.6em;
+  border-radius: 999px;
+}
+.move-new { color: var(--new); border: 1px solid var(--new); }
+.move-return { color: var(--return); border: 1px solid var(--return); }
+
+/* separator every 10 rows */
+.row.row--decade { margin-top: 1.6rem; position: relative; }
+.row.row--decade::before {
+  content: attr(data-decade-label);
+  position: absolute;
+  top: -1.3rem;
+  left: 0.2rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+/* ---- podium card treatment for the first 3 rows, by DOM position ---- */
+
+.ranking-list > .row:nth-child(-n+3) {
+  grid-column: span 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center;
+  gap: 0.6rem;
+  padding: 1.6rem 1.2rem 1.4rem;
+  min-height: 260px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--bg-raised-2), var(--bg-raised));
+}
+/* Billboard order: 2nd - 1st - 3rd, with 1st visually dominant. Negative
+   order values keep the podium ahead of every other row (which all sit at
+   the default order:0) regardless of how many rows follow. */
+.ranking-list > .row:nth-child(1) { order: -2; }
+.ranking-list > .row:nth-child(2) { order: -3; }
+.ranking-list > .row:nth-child(3) { order: -1; }
+
+.ranking-list > .row:nth-child(1) {
+  min-height: 320px;
+  border-color: rgba(232, 182, 76, 0.5);
+  background: linear-gradient(180deg, rgba(232, 182, 76, 0.14), var(--bg-raised));
+}
+
+.ranking-list > .row:nth-child(-n+3) .row-num {
+  position: absolute;
+  top: -0.3em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9rem;
+  min-width: 0;
+  text-align: center;
+  color: var(--ink);
+  opacity: 0.06;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+.ranking-list > .row:nth-child(1) .row-num { font-size: 11rem; opacity: 0.09; color: var(--accent); }
+
+.ranking-list > .row:nth-child(-n+3) .row-avatar,
+.ranking-list > .row:nth-child(-n+3) .row-avatar-fallback {
+  width: 76px; height: 76px;
+  position: relative; z-index: 1;
+}
+.ranking-list > .row:nth-child(-n+3) .row-avatar-fallback { font-size: 2rem; }
+.ranking-list > .row:nth-child(1) .row-avatar,
+.ranking-list > .row:nth-child(1) .row-avatar-fallback { width: 96px; height: 96px; }
+.ranking-list > .row:nth-child(1) .row-avatar-fallback { font-size: 2.4rem; }
+.ranking-list > .row:nth-child(1) .row-avatar { border-color: var(--accent); }
+
+.ranking-list > .row:nth-child(-n+3) .row-name {
+  font-weight: 800;
+  font-size: 1.1rem;
+  white-space: normal;
+  overflow: visible;
+  position: relative; z-index: 1;
+}
+.ranking-list > .row:nth-child(1) .row-name { font-size: 1.4rem; }
+
+.ranking-list > .row:nth-child(-n+3) .row-country {
+  min-width: 0;
+  position: relative; z-index: 1;
+}
+.ranking-list > .row:nth-child(-n+3) .row-flag { font-size: 1.4rem; }
+
+.ranking-list > .row:nth-child(-n+3) .row-tours { display: none; }
+
+.ranking-list > .row:nth-child(-n+3) .row-move { position: relative; z-index: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none !important;
+    opacity: 1;
+    transform: none;
+  }
+  .replay-icon { transition: none; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Empty state / footer                                                    */
+/* ---------------------------------------------------------------------- */
+
+.empty-state {
+  text-align: center;
+  color: var(--ink-dim);
+  padding: 3rem 1rem;
+}
+
+.site-footer {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  color: var(--ink-faint);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Responsive                                                              */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .ranking-list { grid-template-columns: 1fr; gap: 0.6rem; }
+
+  .ranking-list > .row:nth-child(-n+3) {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    justify-content: flex-start;
+    padding: 1rem;
+    min-height: 0;
+  }
+  .ranking-list > .row:nth-child(1) { order: -3; min-height: 0; }
+  .ranking-list > .row:nth-child(2) { order: -2; }
+  .ranking-list > .row:nth-child(3) { order: -1; }
+
+  .ranking-list > .row:nth-child(-n+3) .row-num {
+    position: static;
+    transform: none;
+    font-size: 3rem;
+    opacity: 0.35;
+    line-height: 1;
+    width: 1.6em;
+    flex-shrink: 0;
+  }
+  .ranking-list > .row:nth-child(1) .row-num { font-size: 3.6rem; opacity: 0.4; }
+
+  .ranking-list > .row:nth-child(-n+3) .row-avatar,
+  .ranking-list > .row:nth-child(-n+3) .row-avatar-fallback,
+  .ranking-list > .row:nth-child(1) .row-avatar,
+  .ranking-list > .row:nth-child(1) .row-avatar-fallback {
+    width: 48px; height: 48px; font-size: 1.2rem;
+  }
+  .ranking-list > .row:nth-child(-n+3) .row-name { font-size: 1rem; }
+  .ranking-list > .row:nth-child(1) .row-name { font-size: 1.1rem; }
+  .ranking-list > .row:nth-child(-n+3) .row-move { margin-left: auto; }
+
+  .row-num { font-size: 1.3rem; min-width: 2ch; }
+  .row-country { display: none; }
+  .row-tours { display: none; }
+  .hero { padding: 5rem 1rem 2.5rem; }
+  .hero-title { letter-spacing: 0; }
+}

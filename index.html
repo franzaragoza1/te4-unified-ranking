@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tennis Elbow 4 — The Greatest Unified Ranking</title>
+<meta name="description" content="Weekly unified ranking of Tennis Elbow 4 players, combining the WTSL and Mana Games tours.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#ranking-list">Skip to ranking</a>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="hero-kicker">Tennis Elbow 4</p>
+    <h1 class="hero-title">The Greatest<br>Unified Ranking</h1>
+    <div class="hero-meta">
+      <p class="hero-week" id="week-label">Loading…</p>
+      <p class="hero-blurb">One ranking, two tours: every week we combine the WTSL and Mana Games circuits into a single leaderboard.</p>
+    </div>
+    <button type="button" id="replay-btn" class="replay-btn" disabled>
+      <span class="replay-icon" aria-hidden="true">↻</span>
+      Replay the week
+    </button>
+  </div>
+  <div class="hero-scroll-cue" aria-hidden="true"></div>
+</header>
+
+<main>
+
+  <section class="controls" aria-label="Filters">
+    <div class="controls-inner">
+      <label class="search-field">
+        <span class="visually-hidden">Search players</span>
+        <input type="search" id="search-input" placeholder="Search a player…" autocomplete="off">
+      </label>
+      <div class="tour-filter" role="group" aria-label="Filter by tour">
+        <button type="button" class="tour-chip is-active" data-tour="All">All</button>
+        <button type="button" class="tour-chip" data-tour="WTSL">WTSL</button>
+        <button type="button" class="tour-chip" data-tour="MANA">Mana</button>
+        <button type="button" class="tour-chip" data-tour="BOTH">Both</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="list-section" aria-label="Full ranking">
+    <ol id="ranking-list" class="ranking-list"></ol>
+    <p id="empty-state" class="empty-state" hidden>No players match your search.</p>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Unified ranking combining <a href="https://www.playwtsl.com/TE4/pages/rankings.php?tour=TE4">WTSL</a> and <a href="https://www.managames.com/Forum/OT_Rankings.php">Mana Games</a>. Points are used to compute standings but are never published.</p>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
