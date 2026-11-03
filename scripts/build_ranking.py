@@ -55,10 +55,9 @@ def scrape_wtsl():
     resp = requests.get(WTSL_URL, timeout=30, headers={"User-Agent": "Mozilla/5.0"})
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
-    tables = soup.find_all("table")
-    if len(tables) < 4:
-        raise ScrapeError(f"WTSL: expected at least 4 tables, found {len(tables)}")
-    table = tables[3]
+    table = soup.find("table", id="rankTable")
+    if table is None:
+        raise ScrapeError("WTSL: no se encontro la tabla de rankings (#rankTable)")
     rows = table.find_all("tr")[1:]
 
     players = []
@@ -374,7 +373,9 @@ def build(force_mana_login=False):
     if prev_week_id:
         prev_doc = json.loads((HISTORY_DIR / f"{prev_week_id}.json").read_text(encoding="utf-8"))
         for pl in prev_doc["players"]:
-            prev_map[canonical_key(pl["name"], aliases)] = pl["rank"]
+            # A newly aliased player can have two rows last week; keep the better one.
+            prev_key = canonical_key(pl["name"], aliases)
+            prev_map[prev_key] = min(pl["rank"], prev_map.get(prev_key, pl["rank"]))
 
     ever_seen = set()
     if HISTORY_DIR.exists():
